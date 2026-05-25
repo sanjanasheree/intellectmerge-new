@@ -11,94 +11,172 @@ function App() {
 
   const [employees, setEmployees] = useState([]);
 
-
   const [error, setError] = useState("");
 
+  const [editId, setEditId] = useState(null);
+
+  const [isEditing, setIsEditing] = useState(false);
+
+
+  // FETCH EMPLOYEES
   useEffect(() => {
-  fetchEmployees();
-}, []);
 
-const fetchEmployees = async () => {
-  try {
+    fetchEmployees();
 
-    const response = await axios.get(
-      "http://localhost:5000/api/employees"
-    );
-
-    setEmployees(response.data);
-
-  } catch (error) {
-
-    console.log(error);
-  }
-};
+  }, []);
 
 
+  const fetchEmployees = async () => {
+
+    try {
+
+      const response = await axios.get(
+        "http://localhost:5000/api/employees"
+      );
+
+      setEmployees(response.data);
+
+    } catch (error) {
+
+      console.log(error);
+    }
+  };
+
+
+  // ADD EMPLOYEE
   const addEmployee = async (e) => {
 
-  e.preventDefault();
+    e.preventDefault();
 
-  if (
-    employeeName.trim() === "" ||
-    employeeRole.trim() === ""
-  ) {
+    if (
+      employeeName.trim() === "" ||
+      employeeRole.trim() === ""
+    ) {
 
-    setError("Please fill all fields");
+      setError("Please fill all fields");
 
-    return;
-  }
+      return;
+    }
 
-  try {
+    try {
 
-    const response = await axios.post(
-      "http://localhost:5000/api/employees",
-      {
-        name: employeeName,
-        role: employeeRole,
-      }
-    );
+      const response = await axios.post(
+        "http://localhost:5000/api/employees",
+        {
+          name: employeeName,
+          role: employeeRole,
+        }
+      );
 
-    setEmployees([
-      ...employees,
-      response.data,
-    ]);
+      setEmployees([
+        ...employees,
+        response.data,
+      ]);
 
-    setEmployeeName("");
-    setEmployeeRole("");
+      setEmployeeName("");
+      setEmployeeRole("");
 
-    setError("");
+      setError("");
 
-  } catch (error) {
+    } catch (error) {
 
-    console.log(error);
-  }
-};
+      console.log(error);
+    }
+  };
 
+
+  // DELETE EMPLOYEE
   const deleteEmployee = async (id) => {
 
-  try {
+    try {
 
-    await axios.delete(
-      `http://localhost:5000/api/employees/${id}`
-    );
+      await axios.delete(
+        `http://localhost:5000/api/employees/${id}`
+      );
 
-    setEmployees(
-      employees.filter(
-        (employee) => employee._id !== id
-      )
-    );
+      setEmployees(
+        employees.filter(
+          (employee) => employee._id !== id
+        )
+      );
 
-  } catch (error) {
+    } catch (error) {
 
-    console.log(error);
-  }
-};
+      console.log(error);
+    }
+  };
+
+
+  // EDIT EMPLOYEE
+  const editEmployee = (employee) => {
+
+    setEmployeeName(employee.name);
+
+    setEmployeeRole(employee.role);
+
+    setEditId(employee._id);
+
+    setIsEditing(true);
+  };
+
+
+  // UPDATE EMPLOYEE
+  const updateEmployee = async (e) => {
+
+    e.preventDefault();
+
+    if (
+      employeeName.trim() === "" ||
+      employeeRole.trim() === ""
+    ) {
+
+      setError("Please fill all fields");
+
+      return;
+    }
+
+    try {
+
+      const response = await axios.put(
+        `http://localhost:5000/api/employees/${editId}`,
+        {
+          name: employeeName,
+          role: employeeRole,
+        }
+      );
+
+      const updatedEmployees =
+        employees.map((employee) =>
+
+          employee._id === editId
+            ? response.data
+            : employee
+        );
+
+      setEmployees(updatedEmployees);
+
+      setEmployeeName("");
+
+      setEmployeeRole("");
+
+      setEditId(null);
+
+      setIsEditing(false);
+
+      setError("");
+
+    } catch (error) {
+
+      console.log(error);
+    }
+  };
+
 
   return (
     <>
+
       {!showPortal ? (
 
-        
         <div>
 
           {/* NAVBAR */}
@@ -109,13 +187,27 @@ const fetchEmployees = async () => {
             </h1>
 
             <ul className="nav-links">
-              <li><a href="#home">Home</a></li>
-              <li><a href="#features">Features</a></li>
-              <li><a href="#workflow">Workflow</a></li>
-              <li><a href="#contact">Contact</a></li>
+
+              <li>
+                <a href="#home">Home</a>
+              </li>
+
+              <li>
+                <a href="#features">Features</a>
+              </li>
+
+              <li>
+                <a href="#workflow">Workflow</a>
+              </li>
+
+              <li>
+                <a href="#contact">Contact</a>
+              </li>
+
             </ul>
 
           </nav>
+
 
           {/* HERO SECTION */}
           <section className="hero" id="home">
@@ -123,7 +215,8 @@ const fetchEmployees = async () => {
             <div className="hero-content">
 
               <h2>
-                Preserve Company <br />
+                Preserve Company
+                <br />
                 Knowledge with AI
               </h2>
 
@@ -153,7 +246,8 @@ const fetchEmployees = async () => {
 
           </section>
 
-          {/* CORE FEATURES */}
+
+          {/* FEATURES */}
           <section className="features" id="features">
 
             <h2>Core Features</h2>
@@ -161,35 +255,42 @@ const fetchEmployees = async () => {
             <div className="feature-container">
 
               <div className="feature-card">
+
                 <h3>AI Chatbot</h3>
 
                 <p>
                   Ask company-related questions and receive
                   AI-generated answers instantly.
                 </p>
+
               </div>
 
               <div className="feature-card">
+
                 <h3>Knowledge Storage</h3>
 
                 <p>
                   Store employee documents, notes and
                   company workflows securely.
                 </p>
+
               </div>
 
               <div className="feature-card">
+
                 <h3>Smart Search</h3>
 
                 <p>
                   Retrieve accurate information from the
                   AI knowledge base quickly.
                 </p>
+
               </div>
 
             </div>
 
           </section>
+
 
           {/* WORKFLOW */}
           <section className="workflow" id="workflow">
@@ -235,6 +336,7 @@ const fetchEmployees = async () => {
 
           </section>
 
+
           {/* FOOTER */}
           <footer className="footer" id="contact">
 
@@ -254,7 +356,6 @@ const fetchEmployees = async () => {
 
       ) : (
 
-    
         <div className="portal-container">
 
           <h1 className="portal-title">
@@ -265,10 +366,15 @@ const fetchEmployees = async () => {
             Add employees into the IntellectMerge AI system
           </p>
 
+
           {/* FORM */}
           <form
             className="employee-form"
-            onSubmit={addEmployee}
+            onSubmit={
+              isEditing
+                ? updateEmployee
+                : addEmployee
+            }
           >
 
             <input
@@ -290,19 +396,27 @@ const fetchEmployees = async () => {
             />
 
             <button type="submit">
-              Add Employee
+
+              {isEditing
+                ? "Update Employee"
+                : "Add Employee"}
+
             </button>
 
           </form>
 
+
           {/* VALIDATION */}
           {error && (
+
             <p className="error-message">
               {error}
             </p>
+
           )}
 
-          {/* DYNAMIC RENDERING */}
+
+          {/* EMPLOYEE LIST */}
           <div className="employee-list">
 
             {employees.length === 0 ? (
@@ -324,14 +438,27 @@ const fetchEmployees = async () => {
 
                   <p>{employee.role}</p>
 
-                  <button
-                    className="delete-btn"
-                    onClick={() =>
-                      deleteEmployee(employee._id)
-                    }
-                  >
-                    Delete
-                  </button>
+                  <div className="button-group">
+
+                    <button
+                      className="edit-btn"
+                      onClick={() =>
+                        editEmployee(employee)
+                      }
+                    >
+                      Edit
+                    </button>
+
+                    <button
+                      className="delete-btn"
+                      onClick={() =>
+                        deleteEmployee(employee._id)
+                      }
+                    >
+                      Delete
+                    </button>
+
+                  </div>
 
                 </div>
 
@@ -339,6 +466,7 @@ const fetchEmployees = async () => {
             )}
 
           </div>
+
 
           {/* BACK BUTTON */}
           <button

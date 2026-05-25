@@ -53,4 +53,26 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
+
+router.put("/:id", async (req, res) => {
+
+  try {
+
+    const updatedEmployee =
+      await Employee.findByIdAndUpdate(
+        req.params.id,
+        req.body,
+        { new: true }
+      );
+
+    res.json(updatedEmployee);
+
+  } catch (error) {
+
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+});
+
 module.exports = router;
