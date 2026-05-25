@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import axios from "axios";
 import "./index.css";
 
 function App() {
@@ -14,46 +15,84 @@ function App() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    console.log("Employee list updated");
-  }, [employees]);
+  fetchEmployees();
+}, []);
+
+const fetchEmployees = async () => {
+  try {
+
+    const response = await axios.get(
+      "http://localhost:5000/api/employees"
+    );
+
+    setEmployees(response.data);
+
+  } catch (error) {
+
+    console.log(error);
+  }
+};
 
 
-  const addEmployee = (e) => {
-    e.preventDefault();
+  const addEmployee = async (e) => {
 
-  
-    if (
-      employeeName.trim() === "" ||
-      employeeRole.trim() === ""
-    ) {
-      setError("Please fill all fields");
-      return;
-    }
+  e.preventDefault();
 
-    const newEmployee = {
-      id: Date.now(),
-      name: employeeName,
-      role: employeeRole,
-    };
+  if (
+    employeeName.trim() === "" ||
+    employeeRole.trim() === ""
+  ) {
 
-  
-    setEmployees([...employees, newEmployee]);
+    setError("Please fill all fields");
+
+    return;
+  }
+
+  try {
+
+    const response = await axios.post(
+      "http://localhost:5000/api/employees",
+      {
+        name: employeeName,
+        role: employeeRole,
+      }
+    );
+
+    setEmployees([
+      ...employees,
+      response.data,
+    ]);
 
     setEmployeeName("");
     setEmployeeRole("");
 
     setError("");
-  };
 
+  } catch (error) {
 
-  const deleteEmployee = (id) => {
+    console.log(error);
+  }
+};
 
-    const updatedEmployees = employees.filter(
-      (employee) => employee.id !== id
+  const deleteEmployee = async (id) => {
+
+  try {
+
+    await axios.delete(
+      `http://localhost:5000/api/employees/${id}`
     );
 
-    setEmployees(updatedEmployees);
-  };
+    setEmployees(
+      employees.filter(
+        (employee) => employee._id !== id
+      )
+    );
+
+  } catch (error) {
+
+    console.log(error);
+  }
+};
 
   return (
     <>
@@ -278,7 +317,7 @@ function App() {
 
                 <div
                   className="employee-card"
-                  key={employee.id}
+                  key={employee._id}
                 >
 
                   <h3>{employee.name}</h3>
@@ -288,7 +327,7 @@ function App() {
                   <button
                     className="delete-btn"
                     onClick={() =>
-                      deleteEmployee(employee.id)
+                      deleteEmployee(employee._id)
                     }
                   >
                     Delete
