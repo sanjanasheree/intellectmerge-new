@@ -4,10 +4,14 @@ import "./index.css";
 
 function App() {
 
+  // STATES
   const [showPortal, setShowPortal] = useState(false);
 
   const [employeeName, setEmployeeName] = useState("");
+
   const [employeeRole, setEmployeeRole] = useState("");
+
+  const [knowledge, setKnowledge] = useState("");
 
   const [employees, setEmployees] = useState([]);
 
@@ -16,6 +20,12 @@ function App() {
   const [editId, setEditId] = useState(null);
 
   const [isEditing, setIsEditing] = useState(false);
+
+  const [search, setSearch] = useState("");
+
+  const [question, setQuestion] = useState("");
+
+  const [answer, setAnswer] = useState("");
 
 
   // FETCH EMPLOYEES
@@ -50,7 +60,8 @@ function App() {
 
     if (
       employeeName.trim() === "" ||
-      employeeRole.trim() === ""
+      employeeRole.trim() === "" ||
+      knowledge.trim() === ""
     ) {
 
       setError("Please fill all fields");
@@ -65,6 +76,7 @@ function App() {
         {
           name: employeeName,
           role: employeeRole,
+          knowledge: knowledge,
         }
       );
 
@@ -74,7 +86,10 @@ function App() {
       ]);
 
       setEmployeeName("");
+
       setEmployeeRole("");
+
+      setKnowledge("");
 
       setError("");
 
@@ -114,6 +129,8 @@ function App() {
 
     setEmployeeRole(employee.role);
 
+    setKnowledge(employee.knowledge);
+
     setEditId(employee._id);
 
     setIsEditing(true);
@@ -127,7 +144,8 @@ function App() {
 
     if (
       employeeName.trim() === "" ||
-      employeeRole.trim() === ""
+      employeeRole.trim() === "" ||
+      knowledge.trim() === ""
     ) {
 
       setError("Please fill all fields");
@@ -142,6 +160,7 @@ function App() {
         {
           name: employeeName,
           role: employeeRole,
+          knowledge: knowledge,
         }
       );
 
@@ -159,6 +178,8 @@ function App() {
 
       setEmployeeRole("");
 
+      setKnowledge("");
+
       setEditId(null);
 
       setIsEditing(false);
@@ -170,6 +191,56 @@ function App() {
       console.log(error);
     }
   };
+
+
+  // AI CHATBOT
+  const askAI = () => {
+
+  if(question.trim() === "") {
+
+    setAnswer("Please ask a question");
+
+    return;
+  }
+
+  const lowerQuestion =
+    question.toLowerCase();
+
+  const foundEmployee = employees.find(
+
+    (employee) =>
+
+      lowerQuestion.includes(
+  employee.name.toLowerCase()
+)
+      ||
+
+      lowerQuestion.includes(
+  employee.role.toLowerCase()
+)
+
+      ||
+
+      employee.knowledge
+        .toLowerCase()
+        .includes(lowerQuestion)
+  );
+
+  if(foundEmployee) {
+
+    setAnswer(
+
+      `${foundEmployee.name} works as ${foundEmployee.role}. 
+      Knowledge: ${foundEmployee.knowledge}`
+    );
+
+  } else {
+
+    setAnswer(
+      "No matching company knowledge found."
+    );
+  }
+};
 
 
   return (
@@ -188,21 +259,13 @@ function App() {
 
             <ul className="nav-links">
 
-              <li>
-                <a href="#home">Home</a>
-              </li>
+              <li><a href="#home">Home</a></li>
 
-              <li>
-                <a href="#features">Features</a>
-              </li>
+              <li><a href="#features">Features</a></li>
 
-              <li>
-                <a href="#workflow">Workflow</a>
-              </li>
+              <li><a href="#workflow">Workflow</a></li>
 
-              <li>
-                <a href="#contact">Contact</a>
-              </li>
+              <li><a href="#contact">Contact</a></li>
 
             </ul>
 
@@ -395,6 +458,14 @@ function App() {
               }
             />
 
+            <textarea
+              placeholder="Enter Employee Knowledge / Documents"
+              value={knowledge}
+              onChange={(e) =>
+                setKnowledge(e.target.value)
+              }
+            />
+
             <button type="submit">
 
               {isEditing
@@ -406,7 +477,7 @@ function App() {
           </form>
 
 
-          {/* VALIDATION */}
+          {/* ERROR */}
           {error && (
 
             <p className="error-message">
@@ -414,6 +485,51 @@ function App() {
             </p>
 
           )}
+
+
+          {/* AI CHATBOT */}
+          <div className="chatbot-container">
+
+            <h2>AI Knowledge Chatbot</h2>
+
+            <input
+              type="text"
+              placeholder="Ask company-related questions..."
+              value={question}
+              onChange={(e) =>
+                setQuestion(e.target.value)
+              }
+            />
+
+            <button
+              className="ask-btn"
+              onClick={askAI}
+            >
+              Ask AI
+            </button>
+
+            {answer && (
+
+              <div className="answer-box">
+
+                <p>{answer}</p>
+
+              </div>
+            )}
+
+          </div>
+
+
+          {/* SEARCH */}
+          <input
+            type="text"
+            placeholder="Search Knowledge..."
+            value={search}
+            onChange={(e) =>
+              setSearch(e.target.value)
+            }
+            className="search-bar"
+          />
 
 
           {/* EMPLOYEE LIST */}
@@ -427,42 +543,71 @@ function App() {
 
             ) : (
 
-              employees.map((employee) => (
+              employees
 
-                <div
-                  className="employee-card"
-                  key={employee._id}
-                >
+                .filter((employee) =>
 
-                  <h3>{employee.name}</h3>
+                  employee.name
+                    .toLowerCase()
+                    .includes(search.toLowerCase())
 
-                  <p>{employee.role}</p>
+                  ||
 
-                  <div className="button-group">
+                  employee.role
+                    .toLowerCase()
+                    .includes(search.toLowerCase())
 
-                    <button
-                      className="edit-btn"
-                      onClick={() =>
-                        editEmployee(employee)
-                      }
-                    >
-                      Edit
-                    </button>
+                  ||
 
-                    <button
-                      className="delete-btn"
-                      onClick={() =>
-                        deleteEmployee(employee._id)
-                      }
-                    >
-                      Delete
-                    </button>
+                  employee.knowledge
+                    .toLowerCase()
+                    .includes(search.toLowerCase())
+                )
+
+                .map((employee) => (
+
+                  <div
+                    className="employee-card"
+                    key={employee._id}
+                  >
+
+                    <h3>{employee.name}</h3>
+
+                    <p>{employee.role}</p>
+
+                    <div className="knowledge-box">
+
+                      <h4>Stored Knowledge</h4>
+
+                      <p>{employee.knowledge}</p>
+
+                    </div>
+
+                    <div className="button-group">
+
+                      <button
+                        className="edit-btn"
+                        onClick={() =>
+                          editEmployee(employee)
+                        }
+                      >
+                        Edit
+                      </button>
+
+                      <button
+                        className="delete-btn"
+                        onClick={() =>
+                          deleteEmployee(employee._id)
+                        }
+                      >
+                        Delete
+                      </button>
+
+                    </div>
 
                   </div>
 
-                </div>
-
-              ))
+                ))
             )}
 
           </div>

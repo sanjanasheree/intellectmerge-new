@@ -1,14 +1,14 @@
 const express = require("express");
-
 const router = express.Router();
 
 const Employee = require("../models/Employee");
 
 router.post("/", async (req, res) => {
-  try {
-    const employee = new Employee(req.body);
 
-    await employee.save();
+  try {
+
+    const employee =
+      await Employee.create(req.body);
 
     res.status(201).json(employee);
 
@@ -22,9 +22,11 @@ router.post("/", async (req, res) => {
 
 
 router.get("/", async (req, res) => {
+
   try {
 
-    const employees = await Employee.find();
+    const employees =
+      await Employee.find();
 
     res.json(employees);
 
@@ -36,14 +38,18 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.delete("/:id", async (req, res) => {
+router.put("/:id", async (req, res) => {
+
   try {
 
-    await Employee.findByIdAndDelete(req.params.id);
+    const employee =
+      await Employee.findByIdAndUpdate(
+        req.params.id,
+        req.body,
+        { new: true }
+      );
 
-    res.json({
-      message: "Employee deleted successfully",
-    });
+    res.json(employee);
 
   } catch (error) {
 
@@ -54,18 +60,17 @@ router.delete("/:id", async (req, res) => {
 });
 
 
-router.put("/:id", async (req, res) => {
+router.delete("/:id", async (req, res) => {
 
   try {
 
-    const updatedEmployee =
-      await Employee.findByIdAndUpdate(
-        req.params.id,
-        req.body,
-        { new: true }
-      );
+    await Employee.findByIdAndDelete(
+      req.params.id
+    );
 
-    res.json(updatedEmployee);
+    res.json({
+      message: "Deleted Successfully",
+    });
 
   } catch (error) {
 

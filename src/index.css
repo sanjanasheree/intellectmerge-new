@@ -23,6 +23,7 @@ body{
   box-shadow:0 2px 10px rgba(0,0,0,0.08);
   position:sticky;
   top:0;
+  z-index:100;
 }
 
 .logo{
@@ -189,7 +190,7 @@ body{
 
 .portal-container{
   width:90%;
-  max-width:700px;
+  max-width:900px;
   margin:60px auto;
   background:white;
   padding:40px;
@@ -210,20 +211,24 @@ body{
   margin-bottom:30px;
 }
 
+/* FORM */
+
 .employee-form{
   display:flex;
   flex-direction:column;
   gap:20px;
 }
 
-.employee-form input{
+.employee-form input,
+.employee-form textarea{
   padding:15px;
   border:1px solid #cbd5e1;
   border-radius:10px;
   font-size:16px;
 }
 
-.employee-form input:focus{
+.employee-form input:focus,
+.employee-form textarea:focus{
   outline:none;
   border-color:#2563eb;
 }
@@ -243,11 +248,80 @@ body{
   background:#1d4ed8;
 }
 
+textarea{
+  width:100%;
+  min-height:120px;
+  resize:vertical;
+}
+
+/* ERROR */
+
 .error-message{
   text-align:center;
   color:red;
   margin-top:15px;
+  margin-bottom:20px;
 }
+
+/* AI CHATBOT */
+
+.chatbot-container{
+  background:white;
+  padding:25px;
+  border-radius:18px;
+  margin-bottom:30px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.08);
+}
+
+.chatbot-container h2{
+  color:#2563eb;
+  margin-bottom:15px;
+}
+
+.chatbot-container input{
+  width:100%;
+  padding:14px;
+  border-radius:10px;
+  border:1px solid #ccc;
+  margin-bottom:15px;
+  font-size:15px;
+}
+
+.ask-btn{
+  background:#2563eb;
+  color:white;
+  border:none;
+  padding:12px 25px;
+  border-radius:10px;
+  cursor:pointer;
+  font-size:15px;
+  transition:0.3s;
+}
+
+.ask-btn:hover{
+  background:#1d4ed8;
+}
+
+.answer-box{
+  margin-top:20px;
+  background:#f3f6ff;
+  padding:18px;
+  border-radius:12px;
+  line-height:1.6;
+}
+
+/* SEARCH BAR */
+
+.search-bar{
+  width:100%;
+  padding:14px;
+  margin-bottom:25px;
+  border-radius:10px;
+  border:1px solid #ccc;
+  font-size:15px;
+}
+
+/* EMPLOYEE LIST */
 
 .employee-list{
   margin-top:35px;
@@ -255,10 +329,11 @@ body{
 
 .employee-card{
   background:#f8fafc;
-  padding:20px;
+  padding:25px;
   border-radius:15px;
   margin-bottom:20px;
   transition:0.3s;
+  box-shadow:0 4px 12px rgba(0,0,0,0.08);
 }
 
 .employee-card:hover{
@@ -270,27 +345,100 @@ body{
   margin-bottom:10px;
 }
 
-.delete-btn{
+.employee-card p{
+  color:#475569;
+  line-height:1.6;
+}
+
+/* KNOWLEDGE BOX */
+
+.knowledge-box{
+  background:#eef4ff;
+  padding:15px;
+  border-radius:10px;
   margin-top:15px;
-  padding:10px 18px;
+}
+
+.knowledge-box h4{
+  color:#2563eb;
+  margin-bottom:10px;
+}
+
+/* BUTTON GROUP */
+
+.button-group{
+  display:flex;
+  gap:12px;
+  margin-top:20px;
+}
+
+/* EDIT BUTTON */
+
+.edit-btn{
+  width:90px;
+  height:45px;
   border:none;
   border-radius:8px;
-  background:#ef4444;
   color:white;
   cursor:pointer;
+  font-size:15px;
+  font-weight:500;
+  background:#2563eb;
+  transition:0.3s;
+}
+
+.edit-btn:hover{
+  background:#1d4ed8;
+  transform:scale(1.05);
+}
+
+/* DELETE BUTTON */
+
+.delete-btn{
+  width:90px;
+  height:45px;
+  border:none;
+  border-radius:8px;
+  color:white;
+  cursor:pointer;
+  font-size:15px;
+  font-weight:500;
+  background:crimson;
   transition:0.3s;
 }
 
 .delete-btn:hover{
-  background:#dc2626;
+  background:#b91c1c;
+  transform:scale(1.05);
 }
+
+/* EMPTY */
 
 .empty-message{
   text-align:center;
   color:#64748b;
 }
 
+/* BACK BUTTON */
 
+.back-btn{
+  margin-top:30px;
+  width:100%;
+  padding:15px;
+  border:none;
+  border-radius:10px;
+  background:#0f172a;
+  color:white;
+  font-size:16px;
+  cursor:pointer;
+  transition:0.3s;
+}
+
+.back-btn:hover{
+  background:#1e293b;
+}
+
+/* RESPONSIVE */
 
 @media(max-width:900px){
 
@@ -308,101 +456,11 @@ body{
     font-size:38px;
   }
 
-}
-/* BUTTON GROUP */
+  .nav-links{
+    display:none;
+  }
 
-.button-group {
-
-  display: flex;
-
-  gap: 10px;
-
-  margin-top: 15px;
-}
-
-
-/* EDIT BUTTON */
-
-.edit-btn {
-
-  background: #2563eb;
-
-  color: white;
-
-  border: none;
-
-  padding: 10px 18px;
-
-  border-radius: 8px;
-
-  cursor: pointer;
-
-  transition: 0.3s;
-}
-
-.edit-btn:hover {
-
-  background: #1d4ed8;
-
-  transform: scale(1.05);
-}
-
-
-/* DELETE BUTTON */
-
-.delete-btn {
-
-  background: crimson;
-
-  color: white;
-
-  border: none;
-
-  padding: 10px 18px;
-
-  border-radius: 8px;
-
-  cursor: pointer;
-
-  transition: 0.3s;
-}
-
-.delete-btn:hover {
-
-  background: darkred;
-
-  transform: scale(1.05);
-}
-.button-group {
-  display: flex;
-  gap: 12px;
-  margin-top: 15px;
-}
-
-.edit-btn,
-.delete-btn {
-  width: 90px;
-  height: 45px;
-  border: none;
-  border-radius: 8px;
-  color: white;
-  cursor: pointer;
-  font-size: 15px;
-  font-weight: 500;
-}
-
-.edit-btn {
-  background-color: #2563eb;
-}
-
-.delete-btn {
-  background-color: crimson;
-}
-
-.edit-btn:hover {
-  background-color: #1d4ed8;
-}
-
-.delete-btn:hover {
-  background-color: #b91c1c;
+  .portal-container{
+    padding:25px;
+  }
 }
